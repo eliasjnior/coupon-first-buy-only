@@ -42,6 +42,10 @@ class CouponFirstBuyOnly {
 		add_action( 'woocommerce_coupon_options', array( $this, 'coupon_options' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'options_save' ), 10, 2 );
 		add_action( 'plugins_loaded', array( $this, 'text_domain' ) );
+
+		if ( is_admin() ) {
+			add_action( 'admin_notices', array( $this, 'wrong_woocommerce_option_notice' ) );
+		}
 	}
 
 	/**
@@ -135,6 +139,15 @@ class CouponFirstBuyOnly {
 		) );
 
 		return $customer_orders;
+	}
+
+	/**
+	 * Add a notice if guest checkout is enabled.
+	 */
+	public function wrong_woocommerce_option_notice() {
+		if ( get_option( 'woocommerce_enable_guest_checkout' ) !== 'no' ) {
+			include dirname( __FILE__ ) . '/includes/html-wrong-woocommerce-option-notice.php';
+		}
 	}
 
 	/**
